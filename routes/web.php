@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Models\Product;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -46,3 +47,43 @@ Route::get('/home-page', function () {
 Route::get('/bootstrap', function () {
     return Inertia::render('BootstrapContent');
 })->name('bootstrap');
+
+Route::get('/circle', function () {
+    return Inertia::render('Circle');
+})->name('circle');
+
+Route::get('/counter', function () {
+    return Inertia::render('Counter');
+})->name('counter');
+
+Route::get('/form-example', function () {
+    return Inertia::render('FormExample');
+})->name('form-example');
+
+Route::get('/list-manager', function () {
+    return Inertia::render('ListManager');
+})->name('list-manager');
+
+Route::get('/infinite-scroll', function () {
+    return Inertia::render('InfiniteScrollExample');
+})->name('infinite-scroll');
+
+// routes/web.php
+// use App\Models\Product;
+Route::get('/product', function () {
+    $products = Product::all();
+    return Inertia::render('ProductList', compact('products') );
+})->name('product');
+
+// routes/web.php
+Route::get('/product-others', function () {
+    return Inertia::render('ProductOthers');
+})->name('product-others');
+
+
+use App\Http\Controllers\OrderController;
+
+Route::get('/Quiz3/{order}', [OrderController::class, 'show'])->name('orders.show');
+Route::post('/Quiz3/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+Route::get('/Quiz3', [OrderController::class, 'index'])->name('orders.index');  
+Route::post('/Quiz3/{order}/simulate-payment', [OrderController::class, 'simulatePaymentSuccess'])->name('orders.simulate-payment');

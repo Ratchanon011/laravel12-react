@@ -28,7 +28,6 @@ export default function AuthenticatedLayout({ header, children }) {
                                     href={route('dashboard')}
                                     active={route().current('dashboard')}
                                 >
-                                    Dashboard
                                 </NavLink>
                                 <NavLink href={route('sales.orders.index')} active={route().current('sales.orders.*')}>
     ใบสั่งซื้อ (Sales)

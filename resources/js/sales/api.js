@@ -13,7 +13,7 @@ const api = axios.create({
     },
 });
 
-/** ข้อความ error ที่อ่านง่ายจาก response ของ Laravel */
+/** ข้อความ error ที่อ่านจาก response ของ Laravel */
 export function errorMessage(error) {
     const data = error?.response?.data;
     if (data?.message) return data.message;

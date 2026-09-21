@@ -1,4 +1,4 @@
-import TemplateLayout from '../layouts/TemplateLayout.jsx';
+import TemplateLayout from "@/layouts/TemplateLayout";
  
 export default function AboutPage() {
   return (

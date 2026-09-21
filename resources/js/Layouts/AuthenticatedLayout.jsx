@@ -30,6 +30,9 @@ export default function AuthenticatedLayout({ header, children }) {
                                 >
                                     Dashboard
                                 </NavLink>
+                                <NavLink href={route('sales.orders.index')} active={route().current('sales.orders.*')}>
+    ใบสั่งซื้อ (Sales)
+</NavLink>
                             </div>
                         </div>
 
@@ -161,6 +164,7 @@ export default function AuthenticatedLayout({ header, children }) {
                     </div>
                 </div>
             </nav>
+            
 
             {header && (
                 <header className="bg-white shadow">

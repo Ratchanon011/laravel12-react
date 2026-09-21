@@ -118,3 +118,55 @@ Route::get('/add-data', function () {
     
     return "เพิ่มข้อมูลสำเร็จ 5 รายการ! กลับไปดูหน้าเว็บได้เลยครับ 🎉";
 });
+
+Route::get('/product-manager', function () {
+    $p = Product::all();
+    return Inertia::render('ProductManager', compact('p'));
+})->name('product-manager');
+
+
+Route::get('/product/create', function () {
+    return Inertia::render('ProductForm');
+})->name('product.create');
+
+Route::get('/product/{id}/edit', function ($id) {
+    $product = Product::findOrFail($id);
+    return Inertia::render('ProductForm', compact('product'));
+})->name('product.edit');
+
+// ===== วางส่วน use ไว้ด้านบนของ routes/web.php และวางบล็อก Route::middleware ก่อนบรรทัด require __DIR__.'/auth.php'; =====
+
+use App\Http\Controllers\Sales\SalesCustomerController;
+use App\Http\Controllers\Sales\SalesOrderController;
+use App\Http\Controllers\Sales\SalesProductController;
+use App\Http\Controllers\Sales\SalesReceiptController;
+use App\Http\Controllers\Sales\SalesSummaryController;
+use App\Models\SalesOrder;
+
+Route::middleware('auth')->prefix('sales')->name('sales.')->group(function () {
+    // ---- หน้าเว็บ (Inertia + React) : /sales/orders ----
+    Route::get('/orders', fn () => Inertia::render('Sales/Orders/Index'))->name('orders.index');
+    Route::get('/orders/create', fn () => Inertia::render('Sales/Orders/Form'))->name('orders.create');
+    Route::get('/orders/{order}', fn (SalesOrder $order) => Inertia::render('Sales/Orders/Show', ['orderId' => $order->id]))
+        ->whereNumber('order')->name('orders.show');
+    Route::get('/orders/{order}/edit', fn (SalesOrder $order) => Inertia::render('Sales/Orders/Form', ['orderId' => $order->id]))
+        ->whereNumber('order')->name('orders.edit');
+
+    // ---- ใบเสร็จ PDF : /sales/orders/{id}/receipt ----
+    Route::get('/orders/{order}/receipt', [SalesReceiptController::class, 'show'])
+        ->whereNumber('order')->name('orders.receipt');
+});
+
+// ---- REST API (JSON) : /api/sales/... (ใช้ session ของ Breeze) ----
+Route::middleware('auth')->prefix('api/sales')->name('api.sales.')->group(function () {
+    Route::get('summary', SalesSummaryController::class)->name('summary');
+
+    Route::get('customers', [SalesCustomerController::class, 'index'])->name('customers.index');
+    Route::post('customers', [SalesCustomerController::class, 'store'])->name('customers.store');
+
+    Route::get('products', [SalesProductController::class, 'index'])->name('products.index');
+
+    Route::patch('orders/{order}/status', [SalesOrderController::class, 'updateStatus'])
+        ->whereNumber('order')->name('orders.status');
+    Route::apiResource('orders', SalesOrderController::class);
+});
